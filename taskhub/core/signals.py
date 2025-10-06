@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import Task, Project
+from .models import Task, Project, ActivityLog
 
 # -------------
 # Task Signals
@@ -42,3 +42,60 @@ def project_created_updated(sender, instance, created, **kwargs):
         print(
             f"Project '{instance.name}' updated"
         )
+
+
+# -----------------------
+# Task Signals
+# -----------------------
+@receiver(post_save, sender=Task)
+def task_activity(sender, instance, created, **kwargs):
+    if created:
+        action = "created"
+        desc = f"Task '{instance.title}' was created in project '{instance.project.name}'"
+    else:
+        action = "updated"
+        desc = f"Task '{instance.title}' was updated in project '{instance.project.name}'"
+
+    ActivityLog.objects.create(
+        user=instance.assigned_to,
+        content_type="Task",
+        object_id=instance.id,
+        action=action,
+        description=desc
+    )
+
+@receiver(post_delete, sender=Task)
+def task_delete(sender, instance, **kwargs):
+    ActivityLog.objects.create(
+        user=instance.assigned_to,
+        content_type="Task",
+        object_id=instance.id,
+        action="deleted",
+        description=f"Task '{instance.title}' was deleted from project '{instance.project.name}'"
+    )
+
+
+# -----------------------
+# Project Signals
+# -----------------------
+@receiver(post_save, sender=Project)
+def project_activity(sender, instance, created, **kwargs):
+    action = "created" if created else "updated"
+    desc = f"Project '{instance.name}' was {action}"
+    ActivityLog.objects.create(
+        user=instance.assigned_to,
+        content_type="Project",
+        object_id=instance.id,
+        action=action,
+        description=desc
+    )
+
+@receiver(post_delete, sender=Project)
+def project_deleted(sender, instance, **kwargs):
+    ActivityLog.objects.create(
+        user=instance.assigned_to,
+        content_type="Project",
+        object_id=instance.id,
+        action="deleted",
+        description=f"Project '{instance.name}' was deleted"
+    )

@@ -13,4 +13,6 @@ urlpatterns = [
     
     path('tasks/add/', views.create_task, name='create_task'),
     path('tasks/<int:pk>/edit/', views.task_edit, name='task_edit'),
+    
+    path('activity/', views.activity_feed, name='activity_feed'),
 ]

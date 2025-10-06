@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Project, Task
+from .models import Project, Task, ActivityLog
 from django.contrib import messages
 from .forms import ProjectForm, TaskForm
 
@@ -104,3 +104,9 @@ def task_edit(request, pk):
     else:
         form = TaskForm(instance=task)
     return render(request, 'core/task_form.html', {'form': form, 'title': 'Edit Task'})
+
+
+@login_required
+def activity_feed(request):
+    logs = ActivityLog.objects.filter(user=request.user)
+    return render(request, 'core/activity_feed.html', {'logs': logs})

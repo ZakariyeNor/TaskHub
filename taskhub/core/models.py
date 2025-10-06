@@ -44,3 +44,27 @@ class TaskMetadata(models.Model):
 
     def __str__(self):
         return f"{self.key}: {self.value}"
+
+
+# ActiveLog and notifications
+class ActivityLog(models.Model):
+    ACTIONS = [
+        ('created', 'Created'),
+        ('updated', 'Updated'),
+        ('completed', 'Completed'),
+        ('deleted', 'Deleted'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content_type = models.CharField(max_length=50)  # e.g., Project or Task
+    object_id = models.IntegerField()               # ID of Project/Task
+    action = models.CharField(max_length=20, choices=ACTIONS)
+    description = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.user} {self.action} {self.content_type} {self.object_id}"
