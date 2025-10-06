@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from .models import Task, Project
@@ -23,9 +23,8 @@ def task_created_updated(sender, instance, created, **kwargs):
 
 
 # Log task deletion
-@receiver(pre_delete, sender=Task)
-def task_deleted(sender, instance, created, **kwargs):
-    if created:
+@receiver(post_delete, sender=Task)
+def task_deleted(sender, instance, **kwargs):
         print(
             f"Task '{instance.title}' deleted from project '{instance.project.name}'"
         )
@@ -37,7 +36,7 @@ def task_deleted(sender, instance, created, **kwargs):
 def project_created_updated(sender, instance, created, **kwargs):
     if created:
         print(
-            f"Project '{instance.name}' created by '{instance.project.username}'"
+            f"Project '{instance.name}' created by '{instance.name}'"
         )
     else:
         print(

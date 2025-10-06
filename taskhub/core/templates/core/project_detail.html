@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">{{ project.name }}</h1>
+    <p class="text-gray-600 mt-1">{{ project.description|default:"No description" }}</p>
+  </div>
+  <a href="{% url 'project_list' %}" 
+     class="mt-4 lg:mt-0 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm">
+    ← Back to Projects
+  </a>
+</div>
+
+<!-- TASKS -->
+<h2 class="text-2xl font-semibold text-gray-800 mb-4">Tasks</h2>
+
+<div class="space-y-4">
+  {% for task in tasks %}
+    <div class="bg-white border border-gray-100 rounded-xl shadow-sm p-5 flex items-center justify-between hover:shadow-md transition-all">
+      <div>
+        <a href="{% url 'task_detail' task.id %}" class="text-lg font-medium text-indigo-600 hover:underline">
+          {{ task.title }}
+        </a>
+        <p class="text-gray-500 text-sm">{{ task.get_status_display }} • {{ task.due_date|date:"M j, Y" }}</p>
+      </div>
+
+      {% if task.status != 'done' %}
+      <a href="{% url 'complete_task' task.id %}" 
+         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium">
+         Mark Done
+      </a>
+      {% else %}
+      <span class="text-green-600 font-semibold">✔ Done</span>
+      {% endif %}
+    </div>
+  {% empty %}
+    <div class="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-8 text-center">
+      <p class="text-gray-500">No tasks yet.</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

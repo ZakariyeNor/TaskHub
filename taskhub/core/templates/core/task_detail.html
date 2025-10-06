@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow border border-gray-100">
+  <h1 class="text-2xl font-bold text-indigo-600 mb-3">{{ task.title }}</h1>
+  <div class="text-gray-600 space-y-2">
+    <p><strong>Status:</strong> 
+      <span class="px-2 py-1 rounded text-sm 
+        {% if task.status == 'done' %}bg-green-100 text-green-700
+        {% elif task.status == 'in_progress' %}bg-yellow-100 text-yellow-700
+        {% else %}bg-gray-100 text-gray-700{% endif %}">
+        {{ task.get_status_display }}
+      </span>
+    </p>
+    <p><strong>Description:</strong> {{ task.description|default:"No description provided." }}</p>
+    <p><strong>Assigned to:</strong> {{ task.assigned_to|default:"Unassigned" }}</p>
+    <p><strong>Due Date:</strong> {{ task.due_date|date:"M j, Y, g:i a" }}</p>
+  </div>
+
+  {% if task.status != 'done' %}
+  <a href="{% url 'complete_task' task.id %}" 
+     class="mt-6 inline-block bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-all">
+     Mark as Done
+  </a>
+  {% endif %}
+
+  <div class="mt-6">
+    <a href="{% url 'project_detail' task.project.id %}" 
+       class="text-indigo-600 hover:underline text-sm font-medium">← Back to Project</a>
+  </div>
+</div>
+{% endblock %}
