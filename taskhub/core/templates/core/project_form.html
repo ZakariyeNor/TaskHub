@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+  <h1 class="text-3xl font-semibold text-gray-900 mb-6">{{ title }}</h1>
+  <form method="POST" class="space-y-4 bg-white p-6 rounded-lg shadow">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" 
+            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+      Save
+    </button>
+  </form>
+{% endblock %}

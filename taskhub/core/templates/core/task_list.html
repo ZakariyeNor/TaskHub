@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-3xl font-semibold text-gray-900">Your Tasks</h1>
+    <a href="{% url 'create_task' %}" 
+       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+      Add Task
+    </a>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for task in tasks %}
+      <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition-all border border-gray-100">
+        <h2 class="text-xl font-bold text-indigo-600 mb-2">{{ task.name }}</h2>
+        <p class="text-gray-600 line-clamp-2 mb-4">{{ task.description|default:"No description" }}</p>
+        <a href="{% url 'task_edit' task.id %}" 
+           class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg text-sm">
+          Edit
+        </a>
+      </div>
+    {% empty %}
+      <div class="col-span-full text-center py-20">
+        <p class="text-gray-500 text-lg">You don’t have any tasks yet.</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
